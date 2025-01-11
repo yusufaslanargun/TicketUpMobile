@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'bottom_bar.dart';
 
 class TicketListPage extends StatefulWidget {
   const TicketListPage({super.key});
@@ -84,6 +85,18 @@ class _TicketListPageState extends State<TicketListPage> {
         );
       },
     );
+  }
+
+  void navigateToForm() {
+    print("Navigating to form page");
+  }
+
+  void navigateToHistory() {
+    print("Navigating to history page");
+  }
+
+  void scanCode() {
+    print("Scanning QR code");
   }
 
   @override
@@ -267,6 +280,25 @@ class _TicketListPageState extends State<TicketListPage> {
           ),
         ],
       ),
+      bottomNavigationBar: BottomBar(
+        onHistoryTap: navigateToHistory,
+        onFormTap: navigateToForm,
+        onScanTap: scanCode,
+      ),
+      floatingActionButton: SizedBox(
+        height: 80, // Larger height
+        width: 80, // Larger width
+        child: FloatingActionButton(
+          onPressed: scanCode,
+          backgroundColor: const Color(0xFFD6125E),
+          child: const Icon(
+            Icons.qr_code_scanner,
+            color: Colors.white,
+            size: 32, // Larger icon size
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
