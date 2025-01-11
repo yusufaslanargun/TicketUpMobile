@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages.dart';
+import 'pages.dart';
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -48,7 +48,7 @@ class _FormPageState extends State<FormPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Image.asset(
-              'assets/icons/ticketup_icon_full.png',
+              'assets/icons/ticketup_logo_wh.png',
               height: 40,
             ),
           ],
