@@ -44,6 +44,7 @@ class _FormPageState extends State<FormPage> {
       backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
         backgroundColor: const Color(0xFF333333),
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -53,7 +54,6 @@ class _FormPageState extends State<FormPage> {
             ),
           ],
         ),
-        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(

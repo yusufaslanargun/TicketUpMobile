@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import "past_scan_ticket.dart";
 import 'form.dart';
+import 'pages.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      home: const HomePage(),
     );
   }
 }
@@ -170,6 +171,17 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: const Text('Go to Ticket List Page'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TicketInfoPage()),
+                );
+              },
+              child: const Text('Go to Ticket Info Page'),
             ),
           ],
         ),
