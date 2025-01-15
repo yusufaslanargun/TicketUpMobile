@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import "past_scan_ticket.dart";
-import 'form.dart';
 import 'pages.dart';
 
 void main() {
@@ -177,11 +176,20 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => TicketInfoPage()),
+                  MaterialPageRoute(builder: (context) => TicketInfoPage()),
                 );
               },
               child: const Text('Go to Ticket Info Page'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewLoginPage()),
+                );
+              },
+              child: const Text('Go to Login Page'),
             ),
           ],
         ),

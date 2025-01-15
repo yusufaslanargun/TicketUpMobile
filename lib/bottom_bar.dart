@@ -6,11 +6,11 @@ class BottomBar extends StatelessWidget {
   final VoidCallback onScanTap;
 
   const BottomBar({
-    Key? key,
+    super.key,
     required this.onHistoryTap,
     required this.onFormTap,
     required this.onScanTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

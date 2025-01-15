@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart'; // Import qr_flutter package
 import 'bottom_bar.dart';
-import 'pages.dart';
 
 class TicketInfoPage extends StatelessWidget {
   final Map<String, String> ticket = {
