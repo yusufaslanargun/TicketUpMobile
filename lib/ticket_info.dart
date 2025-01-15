@@ -58,7 +58,8 @@ class TicketInfoPage extends StatelessWidget {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: SingleChildScrollView(  // Wrap the entire body with SingleChildScrollView
+      body: SingleChildScrollView(
+        // Wrap the entire body with SingleChildScrollView
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,6 +229,7 @@ class TicketInfoPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 40),
           ],
         ),
       ),
@@ -255,7 +257,8 @@ class TicketInfoPage extends StatelessWidget {
 }
 
 Widget _buildInfoColumn(String title, String value) {
-  return Expanded(  // Wrap each column in Expanded to make sure they don't overflow
+  return Expanded(
+    // Wrap each column in Expanded to make sure they don't overflow
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [

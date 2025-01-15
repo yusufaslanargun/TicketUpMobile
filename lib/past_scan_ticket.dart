@@ -278,6 +278,7 @@ class _TicketListPageState extends State<TicketListPage> {
                     },
                   ),
           ),
+          SizedBox(height: 40),
         ],
       ),
       bottomNavigationBar: BottomBar(
