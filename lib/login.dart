@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:project/components/gradient_button.dart';
+import 'package:project/components/input_box.dart';
 import 'dart:convert'; // For JSON parsing
-import 'pages.dart';
 import "qr_scanner.dart";
 
 class NewLoginPage extends StatefulWidget {
@@ -13,8 +14,8 @@ class NewLoginPage extends StatefulWidget {
 
 class _NewLoginPageState extends State<NewLoginPage> {
   bool isChecked = false; // Checkbox state
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   // Clear preferences function
   void clearPreferences() {
@@ -44,6 +45,7 @@ class _NewLoginPageState extends State<NewLoginPage> {
           ],
         ),
       );
+      return; // Exit early if fields are empty
     }
 
     final url = Uri.parse(
@@ -55,13 +57,12 @@ class _NewLoginPageState extends State<NewLoginPage> {
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
         if (result == true) {
-          // show login success message as a dialog then navigate to QRCodeScannerPage
-
+          // Show login success message as a dialog then navigate to QRCodeScannerPage
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              title: const Text("Giriş Başarılı"),
-              content: const Text("QR taramaya başlayabilirsiniz."),
+              title: const Text("Login Successful"),
+              content: const Text("You can now start scanning QR codes."),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -72,59 +73,36 @@ class _NewLoginPageState extends State<NewLoginPage> {
                           builder: (context) => const QRCodeScannerPage()),
                     );
                   },
-                  child: const Text("Tamam"),
+                  child: const Text("OK"),
                 )
               ],
             ),
           );
         } else {
-          print("Login failed");
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: const Text("Giriş Başarısız"),
-              content: const Text("Kullanıcı adı veya şifre hatalı."),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Tamam"),
-                )
-              ],
-            ),
-          );
+          _showErrorDialog("Login Failed", "Invalid username or password.");
         }
       } else {
-        print("Error: ${response.statusCode}");
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text("Error"),
-            content: Text("Server error: ${response.statusCode}"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              )
-            ],
-          ),
-        );
+        _showErrorDialog("Error", "Server error: ${response.statusCode}");
       }
     } catch (e) {
-      print("Exception: $e");
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Error"),
-          content: const Text("bir hata oluştu."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            )
-          ],
-        ),
-      );
+      _showErrorDialog("Error", "An unexpected error occurred: $e");
     }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -148,12 +126,12 @@ class _NewLoginPageState extends State<NewLoginPage> {
         child: Column(
           children: [
             Padding(
-              padding:
-                  EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 112),
+              padding: const EdgeInsets.only(
+                  left: 16.0, right: 16, top: 16, bottom: 112),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                    "TicketUp'a Giriş Yap\n(Sadece Güvenlik Girişine açıktır.)",
+                child: const Text(
+                    "Log in to TicketUp\n(Access restricted to security personnel only.)",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -167,9 +145,11 @@ class _NewLoginPageState extends State<NewLoginPage> {
                 children: [
                   Expanded(
                     child: InputBox(
-                        controller: usernameController,
-                        title: "KULLANICI ADI YA DA E-POSTA",
-                        hintText: ""),
+                      controller: usernameController,
+                      title: "Username or Email",
+                      hintText: "Enter your email",
+                      obscureText: false,
+                    ),
                   ),
                   const SizedBox(width: 16),
                 ],
@@ -184,8 +164,9 @@ class _NewLoginPageState extends State<NewLoginPage> {
                   Expanded(
                     child: InputBox(
                         controller: passwordController,
-                        title: "ŞİFRE",
-                        hintText: ""),
+                        title: "Password",
+                        hintText: "Enter your password",
+                        obscureText: true),
                   ),
                   const SizedBox(width: 16),
                 ],
@@ -195,7 +176,7 @@ class _NewLoginPageState extends State<NewLoginPage> {
               padding: const EdgeInsets.only(
                   left: 16.0, right: 32, top: 16, bottom: 16),
               child: GradientButton(
-                  text: "Giriş Yap",
+                  text: "Login",
                   onClick: () {
                     login();
                   }),

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http; // For API calls
 import 'dart:convert'; // For JSON decoding
 import 'package:qr_flutter/qr_flutter.dart'; // For QR code display
 import 'bottom_bar.dart';
+import 'qr_scanner.dart';
+import 'form.dart';
 
 class TicketInfoPage extends StatefulWidget {
   final String scannedData;
@@ -48,6 +50,26 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
         hasError = true;
       });
     }
+  }
+
+  void navigateToForm() {
+    // Navigate to the form page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const FormPage()),
+    );
+  }
+
+  void navigateToHistory() {
+    print("Navigating to history page");
+  }
+
+  void scanCode() {
+    // Navigate to the QR code scanner page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
+    );
   }
 
   @override
@@ -132,10 +154,24 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
                   ),
                 ),
       bottomNavigationBar: BottomBar(
-        onHistoryTap: () => Navigator.pop(context),
-        onFormTap: () => print("Navigating to form"),
-        onScanTap: () => Navigator.pop(context),
+        onHistoryTap: navigateToHistory,
+        onFormTap: navigateToForm,
+        onScanTap: scanCode,
       ),
+      floatingActionButton: SizedBox(
+        height: 80, // Larger height
+        width: 80, // Larger width
+        child: FloatingActionButton(
+          onPressed: scanCode,
+          backgroundColor: const Color(0xFFD6125E),
+          child: const Icon(
+            Icons.qr_code_scanner,
+            color: Colors.white,
+            size: 32, // Larger icon size
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 

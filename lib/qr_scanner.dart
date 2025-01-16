@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'ticket_info.dart';
+import 'pages.dart';
 
 class QRCodeScannerPage extends StatefulWidget {
   const QRCodeScannerPage({Key? key}) : super(key: key);
@@ -28,6 +29,26 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage>
     )..repeat(reverse: true);
     _animation =
         Tween<double>(begin: -50.0, end: 50.0).animate(_animationController!);
+  }
+
+  void navigateToForm() {
+    // Navigate to the form page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const FormPage()),
+    );
+  }
+
+  void navigateToHistory() {
+    print("Navigating to history page");
+  }
+
+  void scanCode() {
+    // Navigate to the QR code scanner page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
+    );
   }
 
   @override
@@ -106,7 +127,7 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage>
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withOpacity(0),
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(20)),
               ),
@@ -128,20 +149,32 @@ class _QRCodeScannerPageState extends State<QRCodeScannerPage>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'QR kodu kare içerisine hizalayın',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
+                  const SizedBox(height: 260),
                 ],
               ),
             ),
           ),
         ],
       ),
+      bottomNavigationBar: BottomBar(
+        onHistoryTap: navigateToHistory,
+        onFormTap: navigateToForm,
+        onScanTap: scanCode,
+      ),
+      floatingActionButton: SizedBox(
+        height: 80, // Larger height
+        width: 80, // Larger width
+        child: FloatingActionButton(
+          onPressed: scanCode,
+          backgroundColor: const Color(0xFFD6125E),
+          child: const Icon(
+            Icons.qr_code_scanner,
+            color: Colors.white,
+            size: 32, // Larger icon size
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 

@@ -9,7 +9,8 @@ class InputBox extends StatelessWidget {
     super.key,
     required this.title,
     required this.hintText,
-    required this.controller, // controller parametresi alındı
+    required this.controller,
+    required bool obscureText, // controller parametresi alındı
   });
 
   @override
@@ -40,11 +41,12 @@ class InputBox extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.white), // Kenar rengi beyaz
             ),
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)), // Opak hint rengi
+            hintStyle: TextStyle(
+                color: Colors.white.withOpacity(0.5)), // Opak hint rengi
           ),
           style: const TextStyle(color: Colors.white), // Yazı rengi beyaz
         ),
-                const SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }

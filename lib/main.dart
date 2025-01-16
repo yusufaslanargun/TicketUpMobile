@@ -186,17 +186,17 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TicketInfoPage()),
+                  MaterialPageRoute(builder: (context) => NewLoginPage()),
                 );
               },
-              child: const Text('Go to Ticket Info Page'),
+              child: const Text('Go to Login Page'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NewLoginPage()),
+                  MaterialPageRoute(builder: (context) => QRCodeScannerPage()),
                 );
               },
               child: const Text('Go to Login Page'),

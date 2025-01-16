@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'state/event_state.dart';
 import 'dart:convert'; // JSON işlemleri için
 import 'package:http/http.dart' as http; // HTTP istekleri için
-
+import "qr_scanner.dart";
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -82,9 +82,9 @@ class _FormPageState extends State<FormPage> {
 
         final ticketRequest = {
           "eventId": eventId,
-          "participantId": participantId.replaceAll('"', ''), // Fazladan çift tırnakları kaldırıyoruz
+          "participantId": participantId.replaceAll(
+              '"', ''), // Fazladan çift tırnakları kaldırıyoruz
         };
-
 
         final ticketResponse = await http.post(
           Uri.parse("http://46.101.166.170:8080/ticketup/tickets/create"),
@@ -112,7 +112,8 @@ class _FormPageState extends State<FormPage> {
           throw Exception("Bilet oluşturulamadı: ${ticketResponse.body}");
         }
       } else {
-        throw Exception("Katılımcı oluşturulamadı: ${participantResponse.body}");
+        throw Exception(
+            "Katılımcı oluşturulamadı: ${participantResponse.body}");
       }
     } catch (error) {
       showDialog(
@@ -131,9 +132,12 @@ class _FormPageState extends State<FormPage> {
     }
   }
 
-
   void navigateToForm() {
-    print("Navigating to form page");
+    // Navigate to the form page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const FormPage()),
+    );
   }
 
   void navigateToHistory() {
@@ -141,7 +145,11 @@ class _FormPageState extends State<FormPage> {
   }
 
   void scanCode() {
-    print("Scanning QR code");
+    // Navigate to the QR code scanner page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
+    );
   }
 
   @override
@@ -192,16 +200,19 @@ class _FormPageState extends State<FormPage> {
                 children: [
                   Expanded(
                     child: InputBox(
-                        controller: nameController,
-                        title: "İSİM *",
-                        hintText: ""),
+                      controller: nameController,
+                      title: "İSİM *",
+                      hintText: "",
+                      obscureText: false,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: InputBox(
                         controller: surnameController,
                         title: "SOYİSİM *",
-                        hintText: ""),
+                        hintText: "",
+                        obscureText: false),
                   ),
                 ],
               ),
@@ -215,7 +226,8 @@ class _FormPageState extends State<FormPage> {
                     child: InputBox(
                         controller: emailController,
                         title: "E-POSTA *",
-                        hintText: ""),
+                        hintText: "",
+                        obscureText: false),
                   ),
                 ],
               ),
@@ -227,9 +239,11 @@ class _FormPageState extends State<FormPage> {
                 children: [
                   Expanded(
                     child: InputBox(
-                        controller: phoneController,
-                        title: "TELEFON NO *",
-                        hintText: ""),
+                      controller: phoneController,
+                      title: "TELEFON NO *",
+                      hintText: "",
+                      obscureText: false,
+                    ),
                   ),
                 ],
               ),
@@ -241,9 +255,11 @@ class _FormPageState extends State<FormPage> {
                 children: [
                   Expanded(
                     child: InputBox(
-                        controller: additionalController,
-                        title: "EKLEMEK İSTEDİKLERİNİZ *",
-                        hintText: ""),
+                      controller: additionalController,
+                      title: "EKLEMEK İSTEDİKLERİNİZ *",
+                      hintText: "",
+                      obscureText: false,
+                    ),
                   ),
                 ],
               ),
