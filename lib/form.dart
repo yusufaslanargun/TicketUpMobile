@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'pages.dart';
+import 'package:provider/provider.dart';
+import 'state/event_state.dart';
+import 'dart:convert'; // JSON işlemleri için
+import 'package:http/http.dart' as http; // HTTP istekleri için
+
 
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
@@ -34,9 +39,98 @@ class _FormPageState extends State<FormPage> {
   }
 
   // Gönder butonunun fonksiyonu
-  void sendForm() {
-    print("Gönderildi");
+  Future<void> sendForm() async {
+    final eventState = Provider.of<EventState>(context, listen: false);
+    String eventId = eventState.eventId;
+
+    if (eventId.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Hata"),
+          content: const Text("Event ID bulunamadı. Lütfen tekrar deneyin."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Tamam"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final requestBody = {
+      "eventId": eventId,
+      "name": nameController.text,
+      "surname": surnameController.text,
+      "email": emailController.text,
+      "phone": phoneController.text,
+      "description": additionalController.text,
+      "isFirstTime": isChecked,
+    };
+
+    try {
+      final participantResponse = await http.post(
+        Uri.parse("http://46.101.166.170:8080/ticketup/participants/create"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(requestBody),
+      );
+
+      if (participantResponse.statusCode == 200) {
+        final participantId = participantResponse.body;
+
+        final ticketRequest = {
+          "eventId": eventId,
+          "participantId": participantId.replaceAll('"', ''), // Fazladan çift tırnakları kaldırıyoruz
+        };
+
+
+        final ticketResponse = await http.post(
+          Uri.parse("http://46.101.166.170:8080/ticketup/tickets/create"),
+          headers: {"Content-Type": "application/json"},
+          body: json.encode(ticketRequest),
+        );
+
+        if (ticketResponse.statusCode == 200) {
+          final ticketId = ticketResponse.body;
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Başarılı"),
+              content: Text("Bilet oluşturuldu! Bilet ID: $ticketId"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Tamam"),
+                ),
+              ],
+            ),
+          );
+        } else {
+          throw Exception("Bilet oluşturulamadı: ${ticketResponse.body}");
+        }
+      } else {
+        throw Exception("Katılımcı oluşturulamadı: ${participantResponse.body}");
+      }
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Hata"),
+          content: Text("Bir hata oluştu: $error"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Tamam"),
+            ),
+          ],
+        ),
+      );
+    }
   }
+
 
   void navigateToForm() {
     print("Navigating to form page");

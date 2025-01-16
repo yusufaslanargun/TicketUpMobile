@@ -3,10 +3,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import "past_scan_ticket.dart";
 import 'pages.dart';
+import 'package:provider/provider.dart';
+import 'state/event_state.dart'; // EventState dosyasının yolu
 import 'qr_scanner.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => EventState()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -173,34 +182,14 @@ class HomePage extends StatelessWidget {
               child: const Text('Go to Ticket List Page'),
             ),
             const SizedBox(height: 16),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => TicketInfoPage()),
-            //     );
-            //   },
-            //   child: const Text('Go to Ticket Info Page'),
-            // ),
-            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QRCodeScannerPage()),
+                  MaterialPageRoute(builder: (context) => TicketInfoPage()),
                 );
               },
-              child: const Text('Go to QR Page'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewLoginPage()),
-                );
-              },
-              child: const Text('Go to Login Page'),
+              child: const Text('Go to Ticket Info Page'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
