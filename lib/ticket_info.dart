@@ -1,42 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart'; // Import qr_flutter package
+import 'package:http/http.dart' as http; // For API calls
+import 'dart:convert'; // For JSON decoding
+import 'package:qr_flutter/qr_flutter.dart'; // For QR code display
 import 'bottom_bar.dart';
-import 'pages.dart';
 
-class TicketInfoPage extends StatelessWidget {
-  final Map<String, String> ticket = {
-    'title': 'Concert',
-    'date': '2022-12-31',
-    'location': 'New York',
-    'participantId': '123456',
-  };
+class TicketInfoPage extends StatefulWidget {
+  final String scannedData;
 
-  final Map<String, String> event = {
-    'name': 'New Year Celebration',
-    'startDate': '2022-12-31',
-    'startTime': '20:00',
-    'location': 'Times Square, New York',
-  };
+  TicketInfoPage({Key? key, required this.scannedData}) : super(key: key);
 
-  final Map<String, String> participant = {
-    'name': 'John',
-    'surname': 'Doe',
-    'title': 'Software Engineer',
-    'city': 'New York',
-  };
+  @override
+  _TicketInfoPageState createState() => _TicketInfoPageState();
+}
 
-  TicketInfoPage({super.key});
+class _TicketInfoPageState extends State<TicketInfoPage> {
+  Map<String, dynamic>? ticketData; // Data from the API
+  bool isLoading = true; // Loading state
+  bool hasError = false; // Error state
 
-  void navigateToForm() {
-    print("Navigating to form page");
+  @override
+  void initState() {
+    super.initState();
+    fetchTicketData(); // Fetch data on initialization
   }
 
-  void navigateToHistory() {
-    print("Navigating to history page");
-  }
+  /// Fetch ticket data from the API using the scanned ID
+  Future<void> fetchTicketData() async {
+    final String apiUrl =
+        "http://46.101.166.170:8080/ticketup/security-officers/ticket/${widget.scannedData}";
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
 
-  void scanCode() {
-    print("Scanning QR code");
+      if (response.statusCode == 200) {
+        setState(() {
+          ticketData = json.decode(response.body);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+    }
   }
 
   @override
@@ -45,239 +56,142 @@ class TicketInfoPage extends StatelessWidget {
       backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
         backgroundColor: const Color(0xFF333333),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              'assets/icons/ticketup_logo_wh.png',
-              height: 40,
-            ),
-            const SizedBox(width: 8),
-            const Text('Bilet', style: TextStyle(color: Colors.white)),
-          ],
-        ),
+        title: const Text('Ticket Information',
+            style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        automaticallyImplyLeading: false,
       ),
-      body: SingleChildScrollView(  // Wrap the entire body with SingleChildScrollView
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            )
+          : hasError
+              ? const Center(
+                  child: Text(
+                    'An error occurred while fetching ticket information.',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Event Details
+                      const SizedBox(height: 16),
+                      _buildInfoCard(
+                        'Event Details',
+                        [
+                          _buildInfoRow(
+                              'Event Name', ticketData?['eventName'] ?? 'N/A'),
+                          _buildInfoRow(
+                              'Event Date', ticketData?['eventDate'] ?? 'N/A'),
+                          _buildInfoRow(
+                              'Event Time', ticketData?['eventTime'] ?? 'N/A'),
+                          _buildInfoRow('Location',
+                              ticketData?['eventLocation'] ?? 'N/A'),
+                        ],
+                      ),
+                      // Participant Information
+                      _buildInfoCard(
+                        'Participant Details',
+                        [
+                          _buildInfoRow(
+                              'Name', ticketData?['participantName'] ?? 'N/A'),
+                          _buildInfoRow('Surname',
+                              ticketData?['participantSurname'] ?? 'N/A'),
+                          _buildInfoRow('Phone',
+                              ticketData?['participantPhone'] ?? 'N/A'),
+                          _buildInfoRow('Email',
+                              ticketData?['participantEmail'] ?? 'N/A'),
+                        ],
+                      ),
+                      // QR Code
+                      const SizedBox(height: 16),
+                      Center(
+                        child: QrImageView(
+                          data: ticketData?['ticketId'] ?? 'No Ticket ID',
+                          version: QrVersions.auto,
+                          size: 200.0,
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Ticket ID
+                      Center(
+                        child: Text(
+                          'Ticket ID: ${ticketData?['ticketId'] ?? 'N/A'}',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+      bottomNavigationBar: BottomBar(
+        onHistoryTap: () => Navigator.pop(context),
+        onFormTap: () => print("Navigating to form"),
+        onScanTap: () => Navigator.pop(context),
+      ),
+    );
+  }
+
+  /// Builds a card with information rows
+  Widget _buildInfoCard(String title, List<Widget> rows) {
+    return Card(
+      color: const Color(0xFF444444),
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
-            Card(
-              color: const Color(0xFF444444),
-              margin: const EdgeInsets.only(bottom: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      ticket['title']!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Date: ${ticket['date']}',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'Location: ${ticket['location']}',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            Card(
-              color: const Color(0xFF444444),
-              margin: const EdgeInsets.only(bottom: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    QrImageView(
-                      data: ticket['participantId'] ??
-                          "No participant ID", // Use the participant ID or other data
-                      version: QrVersions
-                          .auto, // Automatically determine the QR code version
-                      size: 150.0, // Set the size of the QR code
-                      backgroundColor:
-                          Colors.white, // Background color of the QR code
-                    ),
-                    SizedBox(height: 16),
-                    const Text(
-                      'Etkinlik Bilgileri',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      event['name'] ?? "Bilet Bilgileri Yükleniyor...",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildInfoColumn("TARİH",
-                            event['startDate'] ?? "Tarih yükleniyor..."),
-                        _buildInfoColumn(
-                            "SAAT", event['startTime'] ?? "Saat Yükleniyor..."),
-                        _buildInfoColumn("KONUM",
-                            event['location'] ?? "Konum Yükleniyor..."),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Katılımcı Bilgileri
-                    const Text(
-                      'Katılımcı Bilgileri',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildInfoColumn(
-                          "Ad-Soyad",
-                          "${participant['name'] ?? "Yükleniyor..."} ${participant['surname'] ?? "Yükleniyor..."}",
-                        ),
-                        _buildInfoColumn(
-                            "Ünvan", participant['title'] ?? "Yükleniyor..."),
-                        _buildInfoColumn("Katılınılan İl",
-                            participant['city'] ?? "Yükleniyor..."),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Katılımcı ID
-                    const Text(
-                      'KATILIMCI ID',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      ticket['participantId'] ?? "Yükleniyor...",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Bilmeniz Gerekenler
-                    const Text(
-                      'Bilmeniz Gerekenler',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Etkinlik girişinde karekodunuzu gösterek giriş yapabilirsiniz. '
-                      'Etkinlik biletiniz ayrıca mail adresinize ve SMS olarak gönderilecektir. '
-                      'Organizatör ile iletişim için: info@upista.com',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(height: 8),
+            ...rows,
           ],
         ),
       ),
-      bottomNavigationBar: BottomBar(
-        onHistoryTap: navigateToHistory,
-        onFormTap: navigateToForm,
-        onScanTap: scanCode,
-      ),
-      floatingActionButton: SizedBox(
-        height: 80, // Larger height
-        width: 80, // Larger width
-        child: FloatingActionButton(
-          onPressed: scanCode,
-          backgroundColor: const Color(0xFFD6125E),
-          child: const Icon(
-            Icons.qr_code_scanner,
-            color: Colors.white,
-            size: 32, // Larger icon size
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
-}
 
-Widget _buildInfoColumn(String title, String value) {
-  return Expanded(  // Wrap each column in Expanded to make sure they don't overflow
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+  /// Builds a single information row
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

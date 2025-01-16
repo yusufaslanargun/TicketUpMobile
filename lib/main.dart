@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import "past_scan_ticket.dart";
 import 'form.dart';
 import 'pages.dart';
+import 'qr_scanner.dart';
 
 void main() {
   runApp(const MyApp());
@@ -173,15 +174,24 @@ class HomePage extends StatelessWidget {
               child: const Text('Go to Ticket List Page'),
             ),
             const SizedBox(height: 16),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => TicketInfoPage()),
+            //     );
+            //   },
+            //   child: const Text('Go to Ticket Info Page'),
+            // ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => TicketInfoPage()),
+                  MaterialPageRoute(builder: (context) => QRCodeScannerPage()),
                 );
               },
-              child: const Text('Go to Ticket Info Page'),
+              child: const Text('Go to QR Page'),
             ),
           ],
         ),
