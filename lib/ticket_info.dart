@@ -56,7 +56,7 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
       backgroundColor: const Color(0xFF333333),
       appBar: AppBar(
         backgroundColor: const Color(0xFF333333),
-        title: const Text('Ticket Information',
+        title: const Text('Bilet Bilgileri',
             style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
@@ -69,7 +69,7 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
           : hasError
               ? const Center(
                   child: Text(
-                    'An error occurred while fetching ticket information.',
+                    'Bilet Bulunamadı.',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 )
@@ -111,7 +111,7 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
                       const SizedBox(height: 16),
                       Center(
                         child: QrImageView(
-                          data: ticketData?['ticketId'] ?? 'No Ticket ID',
+                          data: ticketData?['ticketId'] ?? 'Böyle Bilet Yok',
                           version: QrVersions.auto,
                           size: 200.0,
                           backgroundColor: Colors.white,
