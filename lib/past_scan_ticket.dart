@@ -126,7 +126,7 @@ class _TicketListPageState extends State<TicketListPage> {
           const SizedBox(height: 20),
           // Section Tabs
           Center(
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               child: Row(
                 children: [
@@ -278,6 +278,7 @@ class _TicketListPageState extends State<TicketListPage> {
                     },
                   ),
           ),
+          SizedBox(height: 40),
         ],
       ),
       bottomNavigationBar: BottomBar(

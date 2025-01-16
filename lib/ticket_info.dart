@@ -195,3 +195,31 @@ class _TicketInfoPageState extends State<TicketInfoPage> {
     );
   }
 }
+
+Widget _buildInfoColumn(String title, String value) {
+  return Expanded(
+    // Wrap each column in Expanded to make sure they don't overflow
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+}

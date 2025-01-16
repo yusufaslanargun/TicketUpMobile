@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SingleTicketView extends StatelessWidget {
   final Map<String, String> ticket;
 
-  const SingleTicketView({Key? key, required this.ticket}) : super(key: key);
+  const SingleTicketView({super.key, required this.ticket});
 
   @override
   Widget build(BuildContext context) {

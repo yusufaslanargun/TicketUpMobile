@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import "past_scan_ticket.dart";
-import 'form.dart';
 import 'pages.dart';
 import 'qr_scanner.dart';
 
@@ -192,6 +191,26 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: const Text('Go to QR Page'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewLoginPage()),
+                );
+              },
+              child: const Text('Go to Login Page'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewLoginPage()),
+                );
+              },
+              child: const Text('Go to Login Page'),
             ),
           ],
         ),
