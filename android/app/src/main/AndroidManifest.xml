@@ -4,7 +4,7 @@
     
     <!-- Allow cleartext (HTTP) traffic -->
     <application
-        android:label="project"
+        android:label="TicketUp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"

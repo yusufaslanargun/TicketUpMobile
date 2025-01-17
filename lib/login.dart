@@ -1,7 +1,7 @@
+import 'pages.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:project/components/gradient_button.dart';
-import 'package:project/components/input_box.dart';
+
 import 'dart:convert'; // For JSON parsing
 import "qr_scanner.dart";
 
@@ -56,7 +56,9 @@ class _NewLoginPageState extends State<NewLoginPage> {
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        if (result == true) {
+
+        print(result);
+        if (result['success'] == true) {
           // Show login success message as a dialog then navigate to QRCodeScannerPage
           showDialog(
             context: context,
