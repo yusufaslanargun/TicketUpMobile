@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert'; // For JSON parsing
 import "qr_scanner.dart";
+import 'package:provider/provider.dart'; // Provider desteği
+import 'state/event_state.dart'; // EventState import edildi
 
 class NewLoginPage extends StatefulWidget {
   const NewLoginPage({super.key});
@@ -45,7 +47,7 @@ class _NewLoginPageState extends State<NewLoginPage> {
           ],
         ),
       );
-      return; // Exit early if fields are empty
+      return; // Eğer alanlar boşsa, işlemi sonlandır
     }
 
     final url = Uri.parse(
@@ -57,28 +59,17 @@ class _NewLoginPageState extends State<NewLoginPage> {
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
 
-        print(result);
         if (result['success'] == true) {
-          // Show login success message as a dialog then navigate to QRCodeScannerPage
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: const Text("Login Successful"),
-              content: const Text("You can now start scanning QR codes."),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const QRCodeScannerPage()),
-                    );
-                  },
-                  child: const Text("OK"),
-                )
-              ],
-            ),
+          // Event ID'yi al ve kaydet
+          final eventId = result['eventId'];
+          if (eventId != null) {
+            Provider.of<EventState>(context, listen: false).setEventId(eventId);
+          }
+
+          // QR kod tarama sayfasına yönlendir
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const QRCodeScannerPage()),
           );
         } else {
           _showErrorDialog("Login Failed", "Invalid username or password.");
